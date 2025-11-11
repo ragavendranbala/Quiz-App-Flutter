@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_app/answer_button.dart';
 import 'package:quiz_app/data/questions.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class QuestionScreen extends StatefulWidget {
-  const QuestionScreen({super.key});
+  final void Function(String answer) onAnswerSelected;
+  const QuestionScreen({super.key, required this.onAnswerSelected});
+
   @override
   State<QuestionScreen> createState() {
     return _QuestionScreenState();
@@ -11,9 +14,17 @@ class QuestionScreen extends StatefulWidget {
 }
 
 class _QuestionScreenState extends State<QuestionScreen> {
-  final currentQuestion = questions[0];
+  var currentQuestionIndex = 0;
+  void onClickAnswerButton(String answer) {
+    widget.onAnswerSelected(answer);
+    setState(() {
+      currentQuestionIndex += 1;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currentQuestion = questions[currentQuestionIndex];
     return Center(
       child: Container(
         margin: EdgeInsets.all(40),
@@ -23,7 +34,11 @@ class _QuestionScreenState extends State<QuestionScreen> {
           children: [
             Text(
               currentQuestion.question,
-              style: TextStyle(color: Colors.white),
+              style: GoogleFonts.inter(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 30),
@@ -31,7 +46,12 @@ class _QuestionScreenState extends State<QuestionScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AnswerButton(onTap: () {}, answerString: answer),
+                  AnswerButton(
+                    onTap: () {
+                      onClickAnswerButton(answer);
+                    },
+                    answerString: answer,
+                  ),
                   SizedBox(height: 10),
                 ],
               );
